@@ -1,0 +1,39 @@
+﻿@page "/categorias"
+@using System.Net.Http
+@using System.Net.Http.Json
+@using BlazorApp1.Data
+@inject HttpClient Http
+
+<h3>Categorias</h3>
+<div class="row">
+	<div class="col-12 text-right">
+		<a href="Categoriasform">Nuevo</a>
+
+	</div>
+</div>
+<RadzenGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" 
+	FilterMode="FilterMode.Advanced" AllowPaging="true" PageSize="20" AllowSorting="true"
+			Data="@oRespuesta.Data" TItem="Categoria" ColumnWidth="200px">
+	<Columns>
+		<RadzenGridColumn TItem="Categoria" Property="Idcat" Title="Idcat"/>
+		<RadzenGridColumn TItem="Categoria" Property="Nombre" Title="Nombre"/>
+		<RadzenGridColumn TItem="Categoria" Title="Edit">
+			<Template Context="Data">
+				
+				<RadzenLink Path=@($"/categoriasform/{Data.Idcat}") Text="Edit" Target="_blank" />
+			</Template>
+		 </RadzenGridColumn>
+		<RadzenGridColumn TItem="Categoria" Title="Delete">
+			<Template Context="Data">
+				<RadzenLink Path=@($"/eliminarcategoria/{Data.Idcat}") Text="Delete" Target="_blank" />
+			</Template>
+		</RadzenGridColumn>
+	</Columns>
+</RadzenGrid>
+
+@code {
+	public string url = "/api/categorias";
+	public Respuesta<List<Categoria>> oRespuesta = new Respuesta<List<Categoria>>();
+	protected override async Task OnInitializedAsync() =>
+		oRespuesta = await Http.GetFromJsonAsync<Data.Respuesta<List<Categoria>>>(url);
+}

@@ -1,0 +1,26 @@
+﻿@page "/eliminarnews/{IdNews:int}"
+@inject NavigationManager navegador
+@using System.Net.Http
+@using System.Net.Http.Json
+@inject HttpClient Http
+@using Data
+<h3>EliminarNews</h3>
+<p>Deseas Eliminar el @IdNews? </p>
+<div>
+	<button @onclick="Cancelar">Cancelar</button>
+	<button @onclick="Eliminar">Eliminar</button>
+</div>
+@code {
+	[Parameter]
+	public int IdNews { get; set; }
+	Respuesta<object> orespuesta = new Respuesta<object>();
+	public string url = "/api/news"; 
+	private void Cancelar() => navegador.NavigateTo("/noticias");
+	private async Task Eliminar()
+	{
+		
+			var response = await Http.DeleteAsync(url+"/"+IdNews);
+			orespuesta = response.Content.ReadFromJsonAsync<Respuesta<object>>().Result;
+			navegador.NavigateTo("/Noticias");
+	}
+}

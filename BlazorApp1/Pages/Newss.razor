@@ -1,0 +1,50 @@
+﻿@page "/noticias"
+@using System.Net.Http
+@using System.Net.Http.Json
+@inject HttpClient Http
+
+<h3>Noticias</h3>
+<div class="row">
+	<div class="col-12 text-right">
+		<a href="noticiasform">Nuevo</a>
+
+	</div>
+</div>
+<RadzenGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" 
+	FilterMode="FilterMode.Simple" AllowPaging="true" PageSize="10" AllowSorting="true"
+			Data="@oRespuesta.Data" TItem="News" ColumnWidth="200px">
+	<Columns>
+		<RadzenGridColumn TItem="News" Property="Titulo" Title="Titulo"/>
+		<RadzenGridColumn TItem="News" Property="IdCat" Title="Categoria" />
+		<RadzenGridColumn TItem="Categoria" Title="Categoria">
+
+		</RadzenGridColumn>
+		<RadzenGridColumn TItem="News" Title="Edit">
+			<Template Context="dta">
+				<RadzenLink Path=@($"/noticiasform/{dta.IdNews}") Text="Edit" Target="_blank" />
+			</Template>
+		 </RadzenGridColumn>
+		<RadzenGridColumn TItem="News" Title="Delete">
+			<Template Context="dta">
+				<RadzenLink Path=@($"/eliminarnews/{dta.IdNews}") Text="Delete" Target="_blank" />
+			</Template>
+		</RadzenGridColumn>
+	</Columns>
+</RadzenGrid>
+
+@code {
+	public string url = "/api/news";
+
+	public Respuesta<List<News>> oRespuesta = new Respuesta<List<News>>();
+
+	public string url2 = "/api/categorias";
+
+	public Respuesta<List<Categoria>> oRespuesta2 = new Respuesta<List<Categoria>>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		oRespuesta = await Http.GetFromJsonAsync<Respuesta<List<News>>>(url);
+		oRespuesta2 = await Http.GetFromJsonAsync<Respuesta<List<Categoria>>>(url2);
+	}
+
+}

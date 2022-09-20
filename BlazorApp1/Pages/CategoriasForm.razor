@@ -1,0 +1,88 @@
+﻿@page "/categoriasform"
+@page "/categoriasform/{Idcat:int}"
+
+@using System.Net.Http
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject NavigationManager Navegador
+@using Data
+<h3>CategoriasForm</h3>
+<RadzenTemplateForm Data="@oCategoria">
+	<div class="row">
+		<div class="col-10">
+			<RadzenFieldset Text="Noticias">
+				<div class="row">
+					<div class="col-md-2 align-items-center d-flex">
+						<RadzenLabel Text="Nombre" />
+					</div>
+					<div class="col-md-6">
+						<RadzenTextBox Name="Nombre" Style="width:100%" @bind-Value="@oCategoria.Nombre" />
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-2 align-items-center d-flex" />
+					<RadzenLabel Text="Categoria" />
+
+					<div class="col-md-6">
+						<RadzenButton Text="Guardar" ButtonStyle="ButtonStyle.Primary" Click=@(args => Guardar()) />
+
+
+					</div>
+				</div>
+			</RadzenFieldset>
+		</div>
+	</div>
+</RadzenTemplateForm>
+<EditForm Model="@oCategoria">
+	<div class="container-fluid">
+		<div class="form-group row mb-1">
+			<label class="col-sm-3">Titulo</label>
+			<div class="col-sm-9">
+				<InputText class="form-control" @bind-Value="@oCategoria.Nombre"></InputText>
+			</div>
+		</div>
+		<div class="form-group row mb-1">
+			<div class="col-sm-12">
+				<button class="btn btn-primary" @onclick="Guardar">Guardar</button>
+			</div>
+
+		</div>
+	</div>
+
+</EditForm>
+@code {
+	[Parameter]
+	public int Idcat { get; set; }
+
+	Categoria oCategoria= new Categoria();
+	Categorias oCategorias= new Categorias();
+	Respuesta<object> orespuesta = new Respuesta<object>();
+	Respuesta<Categoria> orespuestacategoria = new Respuesta<Categoria>();
+	public string url = "/api/categorias";
+	private async Task Guardar()
+	{
+		if (Idcat != 0)
+		{
+			var response = await Http.PutAsJsonAsync<Categoria>(url, oCategoria);
+			orespuesta = response.Content.ReadFromJsonAsync<Respuesta<object>>().Result;
+		}
+		else
+		{
+
+			var response = await Http.PostAsJsonAsync<Categoria>(url, oCategoria);
+			orespuesta = response.Content.ReadFromJsonAsync<Respuesta<object>>().Result;
+		}
+		Navegador.NavigateTo("/categorias");
+	}
+	protected override async Task OnInitializedAsync()
+	{
+		if (Idcat!= 0)
+		{
+			orespuestacategoria= await Http.GetFromJsonAsync<Data.Respuesta<Categoria>>(url + "/" + Idcat);
+			oCategoria= orespuestacategoria.Data;
+		}
+
+
+
+	}
+}

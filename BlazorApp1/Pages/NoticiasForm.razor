@@ -1,0 +1,101 @@
+﻿@page "/noticiasform"
+@page "/noticiasform/{IdNews:int}"
+
+@using System.Net.Http
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject NavigationManager Navegador
+<h3>Noticias Formulario</h3>
+
+<RadzenTemplateForm Data="@oNews">
+	<div class="row">
+		<div class="col-10">
+			<RadzenFieldset Text="Noticias">
+				<div class="row">
+					<div class="col-md-2 align-items-center d-flex">
+						<RadzenLabel Text="Titulo" />
+					</div>
+					<div class="col-md-6">
+						<RadzenTextBox Name="Titulo" Style="width:100%" @bind-Value="@oNews.Titulo" />
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-2 align-items-center d-flex">
+						<RadzenLabel Text="Categoria" />
+					</div>
+					<div class="col-md-6">
+						<RadzenNumeric Name="Categoria" Style="width:100%" @bind-Value="@oNews.IdCat" />
+						<RadzenDropDown AllowClear="true" AllowFiltering="true"
+										FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+										Placeholder="Elige la categoria" TValue="int" Data=@oRespuesta2.Data
+										TextProperty="Nombre" ValueProperty="Idcat" @bind-Value="@oNews.IdCat" Name="Categoria" />
+							
+						<RadzenRequiredValidator Component="Categoria" Text="Requiere que elija una categoria"  DefaultValue="0">
+						</RadzenRequiredValidator>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-2 align-items-center d-flex" />
+						<RadzenLabel Text="Categoria" />
+					
+					<div class="col-md-6">
+						<RadzenButton Text="Guardar" ButtonStyle="ButtonStyle.Primary" Click=@(args => Guardar()) />
+						
+					
+					</div>
+				</div>
+			</RadzenFieldset>
+		</div>
+	</div>
+</RadzenTemplateForm>
+
+	
+
+
+
+
+
+@code {
+	[Parameter]
+	public int IdNews { get; set; }
+
+	News oNews = new News();
+	
+	Newss oNewsp = new Newss();
+	Respuesta<object> orespuesta = new Respuesta<object>();
+
+	Respuesta<News> orespuestanews = new Respuesta<News>();
+	
+	public string url = "/api/news";
+
+	public string url2 = "/api/categorias";
+	public Respuesta<List<Categoria>> oRespuesta2 = new Respuesta<List<Categoria>>();
+		
+
+	private async Task Guardar()
+	{
+		if (IdNews!=0)
+		{
+			var response = await Http.PutAsJsonAsync<News>(url, oNews);
+			orespuesta = response.Content.ReadFromJsonAsync<Respuesta<object>>().Result;
+		}
+		else
+		{
+
+			var response = await Http.PostAsJsonAsync<News>(url,oNews);
+			orespuesta = response.Content.ReadFromJsonAsync<Respuesta<object>>().Result;
+		}
+		Navegador.NavigateTo("/Noticias");
+	}
+	
+	protected override async Task OnInitializedAsync()
+	{
+		if (IdNews!=0)
+		{
+			orespuestanews = await Http.GetFromJsonAsync<Respuesta<News>>(url + "/" + IdNews);
+			oNews = orespuestanews.Data;
+			
+		}
+		oRespuesta2 = await Http.GetFromJsonAsync<Respuesta<List<Categoria>>>(url2);
+	}
+}
