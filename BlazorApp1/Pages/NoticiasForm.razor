@@ -5,17 +5,18 @@
 @using System.Net.Http.Json
 @inject HttpClient Http
 @inject NavigationManager Navegador
+@inject Radzen.DialogService dialogService
 <h3>Noticias Formulario</h3>
 
 <RadzenTemplateForm Data="@oNews">
 	<div class="row">
-		<div class="col-10">
+		<div class="col-12">
 			<RadzenFieldset Text="Noticias">
 				<div class="row">
 					<div class="col-md-2 align-items-center d-flex">
 						<RadzenLabel Text="Titulo" />
 					</div>
-					<div class="col-md-6">
+					<div class="col-md-12">
 						<RadzenTextBox Name="Titulo" Style="width:100%" @bind-Value="@oNews.Titulo" />
 					</div>
 				</div>
@@ -35,13 +36,16 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-md-2 align-items-center d-flex" />
-						<RadzenLabel Text="Categoria" />
-					
+					<div class="col-md-2 align-items-center d-flex">
+						<RadzenLabel Text="Body" />
+					</div>
+					<div class="col-md-12">
+						<RadzenTextArea Rows="5" Name="Body" Style="width:100%" @bind-Value="@oNews.Body" />
+					</div>
+				</div>
+				<div class="row">					
 					<div class="col-md-6">
 						<RadzenButton Text="Guardar" ButtonStyle="ButtonStyle.Primary" Click=@(args => Guardar()) />
-						
-					
 					</div>
 				</div>
 			</RadzenFieldset>

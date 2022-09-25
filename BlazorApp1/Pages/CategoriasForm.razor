@@ -5,11 +5,14 @@
 @using System.Net.Http.Json
 @inject HttpClient Http
 @inject NavigationManager Navegador
-@using Data
-<h3>CategoriasForm</h3>
+
+@inject Radzen.DialogService dialogService
+
+
+<h3>Categorias</h3>
 <RadzenTemplateForm Data="@oCategoria">
-	<div class="row">
-		<div class="col-10">
+	<div style="margin-bottom: 1rem;" class="row">
+		<div class="col-12">
 			<RadzenFieldset Text="Noticias">
 				<div class="row">
 					<div class="col-md-2 align-items-center d-flex">
@@ -20,8 +23,16 @@
 					</div>
 				</div>
 				<div class="row">
+					<div class="col-md-2 align-items-center d-flex">
+						<RadzenLabel Text="Fotografía" />
+					</div>
+					<div class="col-md-12">
+						<RadzenTextArea Name="Foto" Style="width:100%" @bind-Value="@oCategoria.Foto" />
+					</div>
+				</div>
+				<div class="row">
 					<div class="col-md-2 align-items-center d-flex" />
-					<RadzenLabel Text="Categoria" />
+					
 
 					<div class="col-md-6">
 						<RadzenButton Text="Guardar" ButtonStyle="ButtonStyle.Primary" Click=@(args => Guardar()) />
@@ -33,23 +44,7 @@
 		</div>
 	</div>
 </RadzenTemplateForm>
-<EditForm Model="@oCategoria">
-	<div class="container-fluid">
-		<div class="form-group row mb-1">
-			<label class="col-sm-3">Titulo</label>
-			<div class="col-sm-9">
-				<InputText class="form-control" @bind-Value="@oCategoria.Nombre"></InputText>
-			</div>
-		</div>
-		<div class="form-group row mb-1">
-			<div class="col-sm-12">
-				<button class="btn btn-primary" @onclick="Guardar">Guardar</button>
-			</div>
 
-		</div>
-	</div>
-
-</EditForm>
 @code {
 	[Parameter]
 	public int Idcat { get; set; }

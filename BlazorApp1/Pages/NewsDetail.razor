@@ -1,0 +1,57 @@
+﻿@page "/newsdetail/{IdNews:int}"
+
+@using System.Net.Http
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject NavigationManager Navegador
+
+<h4>NOTIPOP BY HIVER TAPIA DOMINGUEZ</h4> <button @onclick="Cancelar">Cancelar</button>
+<div>
+	<h3 style="color:orangered">Nº: @oNews.IdNews Título: @oNews.Titulo</h3>
+<h3>@oNews.Body </h3>
+</div>
+
+@code {
+	[Parameter]
+	public int IdNews { get; set; }
+
+	News oNews = new News();
+
+	Newss oNewsp = new Newss();
+	Respuesta<object> orespuesta = new Respuesta<object>();
+
+	Respuesta<News> orespuestanews = new Respuesta<News>();
+
+	public string url = "/api/news";
+
+	public string url2 = "/api/categorias";
+	public Respuesta<List<Categoria>> oRespuesta2 = new Respuesta<List<Categoria>>();
+
+	private void Cancelar() => Navegador.NavigateTo("newsbycat/"+oNews.IdCat);
+	private async Task Guardar()
+	{
+		if (IdNews != 0)
+		{
+			var response = await Http.PutAsJsonAsync<News>(url, oNews);
+			orespuesta = response.Content.ReadFromJsonAsync<Respuesta<object>>().Result;
+		}
+		else
+		{
+
+			var response = await Http.PostAsJsonAsync<News>(url, oNews);
+			orespuesta = response.Content.ReadFromJsonAsync<Respuesta<object>>().Result;
+		}
+		Navegador.NavigateTo("/Noticias");
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (IdNews != 0)
+		{
+			orespuestanews = await Http.GetFromJsonAsync<Respuesta<News>>(url + "/" + IdNews);
+			oNews = orespuestanews.Data;
+
+		}
+		oRespuesta2 = await Http.GetFromJsonAsync<Respuesta<List<Categoria>>>(url2);
+	}
+}

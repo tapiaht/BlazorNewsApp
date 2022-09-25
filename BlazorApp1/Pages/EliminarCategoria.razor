@@ -3,13 +3,16 @@
 @using System.Net.Http
 @using System.Net.Http.Json
 @inject HttpClient Http
-@using Data
+@inject Radzen.DialogService dialogService
+
+
 <h3>Eliminar Categoria</h3>
 <p>Deseas Eliminar el @Idcat? </p>
 <div>
 	<button @onclick="Cancelar">Cancelar</button>
 	<button @onclick="Eliminar">Eliminar</button>
 </div>
+
 @code {
 	[Parameter]
 	public int Idcat { get; set; }

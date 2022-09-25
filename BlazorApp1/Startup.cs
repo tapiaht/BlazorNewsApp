@@ -12,6 +12,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using BlazorApp1.Areas.Identity;
+using static System.Net.WebRequestMethods;
+using Radzen;
 
 namespace BlazorApp1
 {
@@ -33,6 +35,10 @@ namespace BlazorApp1
             services.AddSingleton<WeatherForecastService>();
             services.AddHttpClient();
             services.AddScoped<TokenProvider>();
+            services.AddScoped<DialogService>();
+            services.AddScoped<NotificationService>();
+            
+
             var httpClientHandler = new HttpClientHandler();
 
             httpClientHandler.ServerCertificateCustomValidationCallback =
@@ -42,7 +48,10 @@ namespace BlazorApp1
             
             services.AddSingleton(new HttpClient(httpClientHandler) 
             {
-                BaseAddress = new Uri("https://localhost:44367")
+                //BaseAddress = new Uri("https://localhost:44367/api")
+                BaseAddress = new Uri("https://webapinewsdeploy.azurewebsites.net/")
+                //BaseAddress = new Uri("https://apinews.azure-api.net/")
+                
 
             }) ;
         }

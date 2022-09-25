@@ -1,37 +1,43 @@
 ﻿@page "/noticias"
 @using System.Net.Http
 @using System.Net.Http.Json
+@using System.Diagnostics
 @inject HttpClient Http
-
+@inject DialogService DialogService
+<RadzenDialog />
 <h3>Noticias</h3>
 <div class="row">
 	<div class="col-12 text-right">
 		<a href="noticiasform">Nuevo</a>
-
 	</div>
-</div>
-<RadzenGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" 
+
+<RadzenDataGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" 
 	FilterMode="FilterMode.Simple" AllowPaging="true" PageSize="10" AllowSorting="true"
-			Data="@oRespuesta.Data" TItem="News" ColumnWidth="200px">
+			Data="@oRespuesta.Data" TItem="News" >
 	<Columns>
-		<RadzenGridColumn TItem="News" Property="Titulo" Title="Titulo"/>
-		<RadzenGridColumn TItem="News" Property="IdCat" Title="Categoria" />
-		<RadzenGridColumn TItem="Categoria" Title="Categoria">
+			<RadzenDataGridColumn TItem="News" Property="Titulo" Title="Titulo" Width="200px" />
+			<RadzenDataGridColumn TItem="News" Property="IdCat" Title="Categoria" Width="50px" />
+		<RadzenDataGridColumn TItem="News" Property="Body" Title="Body" Width="600px"/>
 
-		</RadzenGridColumn>
-		<RadzenGridColumn TItem="News" Title="Edit">
+			<RadzenDataGridColumn TItem="News" Title="Edit" Width="50px">
 			<Template Context="dta">
-				<RadzenLink Path=@($"/noticiasform/{dta.IdNews}") Text="Edit" Target="_blank" />
+				@*<RadzenLink Path=@($"/noticiasform/{dta.IdNews}") Text="Edit" Target="_blank" />*@
+					<RadzenButton Text="" ButtonStyle="ButtonStyle.Secondary" Icon="edit" Click="@((args)=>OpenEdit(dta.IdNews))" />
+
+					@*<a href="noticiasform/@dta.IdNews">Editar</a>*@
 			</Template>
-		 </RadzenGridColumn>
-		<RadzenGridColumn TItem="News" Title="Delete">
+		 </RadzenDataGridColumn>
+			<RadzenDataGridColumn TItem="News" Title="Delete" Width="50px">
 			<Template Context="dta">
-				<RadzenLink Path=@($"/eliminarnews/{dta.IdNews}") Text="Delete" Target="_blank" />
+				@*<RadzenLink Path=@($"/eliminarnews/{dta.IdNews}") Text="Delete" Target="_blank" />*@
+					@*<a href="eliminarnews/@dta.IdNews">Eliminar</a>*@
+					<RadzenButton Text="" ButtonStyle="ButtonStyle.Danger" Icon="close" Click="@((args)=>OpenDelete(dta.IdNews))" />
+
 			</Template>
-		</RadzenGridColumn>
+		</RadzenDataGridColumn>
 	</Columns>
-</RadzenGrid>
-
+</RadzenDataGrid>
+</div>
 @code {
 	public string url = "/api/news";
 
@@ -45,6 +51,22 @@
 	{
 		oRespuesta = await Http.GetFromJsonAsync<Respuesta<List<News>>>(url);
 		oRespuesta2 = await Http.GetFromJsonAsync<Respuesta<List<Categoria>>>(url2);
+	}
+	public async Task OpenEdit(int Idc)
+	{
+
+		Debug.Print(Idc.ToString());
+		var loco = await DialogService.OpenAsync<NoticiasForm>($"Editar Noticia: {Idc}",
+						new Dictionary<string, object>() { { "IdNews", Idc } },
+						new DialogOptions() { Width = "700px", Height = "570px", Resizable = true, Draggable = true });
+	}
+
+	public async Task OpenDelete(int idc)
+	{
+		Debug.Print("entro");
+		await DialogService.OpenAsync<EliminarNews>($"Eliminar Registro: {idc}",
+						new Dictionary<string, object>() { { "IdNews", idc } },
+						new DialogOptions() { Width = "700px", Height = "270px", Resizable = true, Draggable = true });
 	}
 
 }

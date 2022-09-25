@@ -1,0 +1,62 @@
+﻿@page "/newsbycat/{Idcat:int}"
+@inject NavigationManager navegador
+@using System.Net.Http
+@using System.Net.Http.Json
+@inject HttpClient Http
+<div>
+<h3>Noticias por Categoria: Nº @Idcat > @oCategoria.Nombre</h3>
+	<button @onclick="Cancelar">Cancelar</button>
+</div>
+<RadzenCard Class="mt-3">
+	<RadzenDataList PageSize="6" WrapItems="true" AllowPaging="true" Data="@oRespuesta.Data" TItem="News">
+		<Template Context="n">
+			<RadzenCard Style="width: 250px; background-color:burlywood">
+				<div class="row">
+					<div class="col-md-8 ">
+						<RadzenBadge BadgeStyle="BadgeStyle.Light" Text="" Class="mr-1" />
+						@*<RadzenLink Path=@($"/newsdetail/{n.IdNews}") Text=@($"{n.Titulo}") Target="_blank" />
+						<RadzenLink Path=@($"/newsdetail/{IdNews}") Text= Target="_blank" />*@
+						<a href="newsdetail/@n.IdNews">@($"{n.Titulo}")</a>
+					</div>
+				</div>
+
+				<div class="d-flex flex-row align-items-center">
+					<RadzenImage Path="https://th.bing.com/th/id/OIP.thcZQNeg5b3YOy_WE0kJ3AAAAA?pid=ImgDet&rs=1" Style="width: 80px; height: 80px;" class="btTxt submit" id="verForm" />
+
+				</div>
+			</RadzenCard>
+		</Template>
+	</RadzenDataList>
+</RadzenCard>
+@code {
+	[Parameter]
+	public int Idcat { get; set; }
+	[Parameter]
+	public int IdNews { get; set; }
+	public string url = "/api/categorias";
+	Categoria oCategoria = new Categoria();
+	private void Cancelar() => navegador.NavigateTo("/");
+	Respuesta<Categoria> orespuesta = new Respuesta<Categoria>();
+
+	public Respuesta<List<News>> oRespuesta = new Respuesta<List<News>>();
+	public Respuesta<List<Categoria>> oRespuesta2 = new Respuesta<List<Categoria>>();
+	public string url2 = "/api/categorias";
+
+	//public Respuesta<List<Categoria>> oRespuesta2 = new Respuesta<List<Categoria>>();
+	//Respuesta<object> oRespuesta2 = new Respuesta<object>();
+
+	protected override async Task OnInitializedAsync()
+	{
+
+		oRespuesta2 = await Http.GetFromJsonAsync<Respuesta<List<Categoria>>>(url);
+		oRespuesta = await Http.GetFromJsonAsync<Respuesta<List<News>>>(url+"/"+Idcat+"/news");
+		
+		if (Idcat != 0)
+		{
+			orespuesta = await Http.GetFromJsonAsync<Respuesta<Categoria>>(url + "/" + Idcat);
+			oCategoria= orespuesta.Data;
+
+		}
+		
+	}
+}

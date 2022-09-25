@@ -1,40 +1,61 @@
 ﻿@page "/"
-
+@using System.Net.Http
+@using System.Net.Http.Json
+@inject HttpClient Http
 <h1>Universidad Adventista de Bolivia!</h1>
+Bienvenido al Sistema de Noticias POP.
+<RadzenPanel AllowCollapse="true" Style="width: 1000px; margin: 2px auto;">
+    <HeaderTemplate>
+        <h4 class="m-0 d-flex align-items-center">
+            <RadzenIcon Class="oi oi-book mr-1" /><b>CATEGORIAS</b>
+        </h4>
+    </HeaderTemplate>
+    <ChildContent>
+        <RadzenCard Class="mt-3">
+            <RadzenDataList PageSize="8" WrapItems="true" AllowPaging="true" Data="@oRespuesta2.Data" TItem="Categoria">
+                <Template Context="cat">
+                    <RadzenCard Style="width: 200px;background-color:silver">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="" Class="mr-1" />
+                                    @*<RadzenLink Path=@($"/newsbycat/{cat.Idcat}") Text=@($"{cat.Nombre}") Target="_blank" />*@
+                                <a style="font-size:16px" href="newsbycat/@cat.Idcat">@($"{cat.Nombre}") </a>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-row align-items-center">
+                            <RadzenImage Path="@($"{cat.Foto}")"  Style="width: 200px; height: 100px;" class="btTxt submit" id="verForm" />
+                        </div>
+                    </RadzenCard>
+                </Template>
+            </RadzenDataList>
+        </RadzenCard>
+    </ChildContent>
+</RadzenPanel>
 
-Bienvenido al Sistema.
+@code {
+    public string url = "/api/news";
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">HIVER TAPIA DOMINGUEZ</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarText">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Inicio</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Noticias</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Contactos</a>
-          </li>
-        </ul>
-        <span class="navbar-text">
-            <input type="datetime">
-            <a class="px-4 nav-link" href="#" [routerLink]="['/auth']">Login</a>
-        </span>
-      </div>
-    </div>
-  </nav>
+    public Respuesta<List<News>> oRespuesta = new Respuesta<List<News>>();
 
-<!-- Footer -->
-<footer class="text-center text-lg-start bg-white text-muted">
-    <!-- Section: Social media -->
-      <div class="me-5 d-none d-lg-block">
-        <span>Acerca de..:</span>
-      </div>
-    
-</footer>
+    public string url2 = "/api/categorias";
+
+    public Respuesta<List<Categoria>> oRespuesta2 = new Respuesta<List<Categoria>>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        oRespuesta = await Http.GetFromJsonAsync<Respuesta<List<News>>>(url);
+        oRespuesta2 = await Http.GetFromJsonAsync<Respuesta<List<Categoria>>>(url2);
+    }
+    private System.Drawing.Color colorand()
+    {
+        var random = new Random();
+        System.Drawing.Color c;
+        unchecked
+        {
+            var n = (int)0xFF000000 + (random.Next(0xFFFFFF) & 0x7F7F7F);
+            c = System.Drawing.Color.FromArgb(n);
+        }
+        return c;
+    }
+
+}
