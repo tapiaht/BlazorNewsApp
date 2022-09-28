@@ -22,3 +22,4 @@ usando el manejador de paquetes CLI de windows 10. winget.
 -Clonamos el repositorio o descargar el compromido en un directorio.
 pathxx>dotnet run
 Abrir en un browser http://localhost:5000
+![image](https://user-images.githubusercontent.com/88572723/192870868-d25ee3da-9a3f-4267-ba74-1c26e978cdd0.png)
