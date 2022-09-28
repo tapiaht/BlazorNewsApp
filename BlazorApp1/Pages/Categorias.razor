@@ -21,7 +21,11 @@
 	<Columns>
 		<RadzenGridColumn TItem="Categoria" Property="Idcat" Title="Idcat" Width="50px" />
 		<RadzenGridColumn TItem="Categoria" Property="Nombre" Title="Nombre"/>
-		<RadzenGridColumn TItem="Categoria" Property="Foto" Title="Foto"/>
+		<RadzenGridColumn TItem="Categoria" Title="Foto">
+		        <Template Context="Data">
+                    <RadzenImage Path="@Data.Foto" class="rz-gravatar" />
+                </Template>
+		</RadzenGridColumn>
 		<RadzenGridColumn TItem="Categoria" Title="Edit" Width="50px">
 			<Template Context="Data">
 				

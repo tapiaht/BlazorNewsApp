@@ -48,8 +48,8 @@ namespace BlazorApp1
             
             services.AddSingleton(new HttpClient(httpClientHandler) 
             {
-                //BaseAddress = new Uri("https://localhost:44367/api")
-                BaseAddress = new Uri("https://webapinewsdeploy.azurewebsites.net/")
+                BaseAddress = new Uri("https://localhost:44367/api")
+                //BaseAddress = new Uri("https://webapinewsdeploy.azurewebsites.net/") //aqui es el api online
                 //BaseAddress = new Uri("https://apinews.azure-api.net/")
                 
 
